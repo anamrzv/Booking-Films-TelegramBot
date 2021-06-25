@@ -1,6 +1,8 @@
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
+import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
@@ -16,6 +18,7 @@ public class Bot extends TelegramLongPollingBot {
 
     private final String BOT_NAME;
     private final String BOT_TOKEN;
+    private final TelegramFacade telegramFacade = new TelegramFacade();
 
     public Bot(String botName, String botToken) {
         super();
@@ -35,18 +38,13 @@ public class Bot extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
-        String message = update.getMessage().getText();
-        //sendMsg(update.getMessage().getChatId().toString(), message);
-        String user = update.getMessage().getChatId().toString();
-        if (message.equals("Привет")) {
-            sendMsg(user, "Привет!!!");
-        } else if (message.equals("Хочу в кинотеатр!!!")) {
-            sendMsg(user, "хоти))))}");
-            //setInline();
-        } else {
-            sendMsg(user, "пока ничего не умею(((");
+        SendMessage answer = telegramFacade.handleUpdate(update);
+        try{
+            setButtons(answer);
+            execute(answer);
+        } catch (TelegramApiException e){
+            e.printStackTrace();
         }
-
     }
 
     public synchronized void sendMsg(String chatId, String s) {
@@ -76,7 +74,7 @@ public class Bot extends TelegramLongPollingBot {
         // Первая строчка клавиатуры
         KeyboardRow keyboardFirstRow = new KeyboardRow();
         // Добавляем кнопки в первую строчку клавиатуры
-        keyboardFirstRow.add(new KeyboardButton("Хочу в кинотеатр!!!"));
+        keyboardFirstRow.add(new KeyboardButton("Фильмы"));
 
         // Вторая строчка клавиатуры
         KeyboardRow keyboardSecondRow = new KeyboardRow();
