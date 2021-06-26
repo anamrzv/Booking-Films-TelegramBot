@@ -5,6 +5,7 @@ import handlers.BotStateContext;
 import handlers.InputMessageHandler;
 import handlers.films.FilmsShowHandler;
 import lombok.extern.slf4j.Slf4j;
+import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -17,6 +18,8 @@ public class TelegramFacade {
     private DataCache userDataCache = new UserDataCache();
     private final List<InputMessageHandler> messageHandlers;
     private BotStateContext botStateContext;
+    private CallbackQueryFacade callbackQueryFacade = new CallbackQueryFacade();
+
 
     public TelegramFacade(){
         messageHandlers = new LinkedList<>();
@@ -29,8 +32,14 @@ public class TelegramFacade {
      * @param update
      * @return
      */
-    public SendMessage handleUpdate(Update update) {
+    public BotApiMethod<?> handleUpdate(Update update) {
         SendMessage replyMessage = null;
+
+        if (update.hasCallbackQuery()){
+            log.info("New callbackQuery from User:{}, with data: {}",
+                    update.getCallbackQuery().getFrom().getUserName(), update.getCallbackQuery().getData());
+            return callbackQueryFacade.processCallbackQuery(update.getCallbackQuery());
+        }
 
         Message message = update.getMessage();
         if (message != null && message.hasText()) {

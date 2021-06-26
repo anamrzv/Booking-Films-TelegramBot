@@ -1,4 +1,6 @@
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
+import org.telegram.telegrambots.bots.TelegramWebhookBot;
+import org.telegram.telegrambots.meta.api.interfaces.BotApiObject;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -36,9 +38,9 @@ public class Bot extends TelegramLongPollingBot {
         return BOT_NAME;
     }
 
-    @Override
     public void onUpdateReceived(Update update) {
-        SendMessage answer = telegramFacade.handleUpdate(update);
+        SendMessage answer = (SendMessage) telegramFacade.handleUpdate(update);
+        answer.enableMarkdown(true);
         try{
             setButtons(answer);
             execute(answer);
