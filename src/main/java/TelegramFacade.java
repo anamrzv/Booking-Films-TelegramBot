@@ -5,13 +5,10 @@ import handlers.BotStateContext;
 import handlers.InputMessageHandler;
 import handlers.films.FilmsShowHandler;
 import lombok.extern.slf4j.Slf4j;
-import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
-import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -33,21 +30,20 @@ public class TelegramFacade {
     /**
      * Проверяем, не пустое ли сообщение/текстовое ли, передаем на обработку
      */
-    public BotApiMethod<?> handleUpdate(Update update) {
+    public SendMessage handleUpdate(Update update) {
         SendMessage replyMessage = null;
         Message message = update.getMessage();
-
 
         if (message != null && message.hasText()) {
             log.info("New message from User:{}, chatID:{}, with text: {}",
                     message.getFrom().getUserName(), message.getChatId(), message.getText());
             replyMessage = handleInputMessage(message);
         }
-        //        if (update.hasCallbackQuery()) {
-//            log.info("New callbackQuery from User:{}, with data: {}",
-//                    update.getCallbackQuery().getFrom().getUserName(), update.getCallbackQuery().getData());
-//            return processCallbackQuery(update.getCallbackQuery());
-//        }
+        if (update.hasCallbackQuery()) {
+            log.info("New callbackQuery from User:{}, with data: {}",
+                    update.getCallbackQuery().getFrom().getUserName(), update.getCallbackQuery().getData());
+            return processCallbackQuery(update.getCallbackQuery());
+        }
 
         return replyMessage;
     }
@@ -75,25 +71,21 @@ public class TelegramFacade {
         return replyMessage;
     }
 
-//    private BotApiMethod<?> processCallbackQuery(CallbackQuery buttonQuery) {
-//        String chatId = buttonQuery.getMessage().getChatId().toString();
-//        int userId = buttonQuery.getFrom().getId();
-//        BotApiMethod<?> callBackAnswer;
-//        if (buttonQuery.getData().equals("sessions")) {
-//            callBackAnswer = sendAnswerCallbackQuery("завтра", false, buttonQuery);
-//        } else {
-//            callBackAnswer = sendAnswerCallbackQuery("вчера", false, buttonQuery);
-//        }
-//
-//        return callBackAnswer;
-//    }
-//
-//    private AnswerCallbackQuery sendAnswerCallbackQuery(String text, boolean alert, CallbackQuery callbackquery) {
-//        AnswerCallbackQuery answerCallbackQuery = new AnswerCallbackQuery();
-//        answerCallbackQuery.setCallbackQueryId(callbackquery.getId());
-//        answerCallbackQuery.setShowAlert(alert);
-//        answerCallbackQuery.setText(text);
-//        return answerCallbackQuery;
-//    }
+    private SendMessage processCallbackQuery(CallbackQuery buttonQuery) {
+        SendMessage callBackAnswer;
+        if (buttonQuery.getData().equals("sessions")) {
+            callBackAnswer = sendAnswerCallbackQuery("завтра", buttonQuery); //Примеры
+        } else {
+            callBackAnswer = sendAnswerCallbackQuery("вчера", buttonQuery);
+        }
+        return callBackAnswer;
+    }
+
+    private SendMessage sendAnswerCallbackQuery(String text, CallbackQuery callbackquery) {
+        SendMessage answerCallbackQuery = new SendMessage();
+        answerCallbackQuery.setChatId(callbackquery.getMessage().getChatId().toString());
+                answerCallbackQuery.setText(text);
+        return answerCallbackQuery;
+    }
 
 }
