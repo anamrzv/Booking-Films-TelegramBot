@@ -13,16 +13,16 @@ import java.util.Map;
 public class BotStateContext {
     private Map<BotState, InputMessageHandler> messageHandlers = new HashMap<>();
 
-    public BotStateContext(List<InputMessageHandler> messageHandlers){
+    public BotStateContext(List<InputMessageHandler> messageHandlers) {
         messageHandlers.forEach(handler -> this.messageHandlers.put(handler.getHandlerName(), handler));
     }
 
-    public SendMessage processInputMessage(BotState currentState, Message message){
+    public SendMessage processInputMessage(BotState currentState, Message message) {
         InputMessageHandler currentMessageHandler = findMessageHandler(currentState);
         return currentMessageHandler.handle(message);
     }
 
-    private InputMessageHandler findMessageHandler(BotState currentState){
+    private InputMessageHandler findMessageHandler(BotState currentState) {
         return messageHandlers.get(currentState);
     }
 }

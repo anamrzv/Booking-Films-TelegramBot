@@ -38,78 +38,36 @@ public class Bot extends TelegramLongPollingBot {
         return BOT_NAME;
     }
 
+    @Override
     public void onUpdateReceived(Update update) {
         SendMessage answer = (SendMessage) telegramFacade.handleUpdate(update);
         answer.enableMarkdown(true);
-        try{
+        try {
             setButtons(answer);
             execute(answer);
-        } catch (TelegramApiException e){
-            e.printStackTrace();
-        }
-    }
-
-    public synchronized void sendMsg(String chatId, String s) {
-        SendMessage sendMessage = new SendMessage();
-        sendMessage.enableMarkdown(true);
-        sendMessage.setChatId(chatId);
-        sendMessage.setText(s);
-        try {
-            setButtons(sendMessage);
-            execute(sendMessage);
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
     }
 
     public synchronized void setButtons(SendMessage sendMessage) {
-        // Создаем клавиуатуру
+
         ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
         sendMessage.setReplyMarkup(replyKeyboardMarkup);
         replyKeyboardMarkup.setSelective(true);
         replyKeyboardMarkup.setResizeKeyboard(true);
         replyKeyboardMarkup.setOneTimeKeyboard(false);
 
-        // Создаем список строк клавиатуры
         List<KeyboardRow> keyboard = new ArrayList<>();
-
-        // Первая строчка клавиатуры
         KeyboardRow keyboardFirstRow = new KeyboardRow();
-        // Добавляем кнопки в первую строчку клавиатуры
-        keyboardFirstRow.add(new KeyboardButton("Фильмы"));
-
-        // Вторая строчка клавиатуры
         KeyboardRow keyboardSecondRow = new KeyboardRow();
-        // Добавляем кнопки во вторую строчку клавиатуры
-        keyboardSecondRow.add(new KeyboardButton("Помощь"));
 
-        // Добавляем все строчки клавиатуры в список
+        keyboardFirstRow.add(new KeyboardButton("Фильмы"));
         keyboard.add(keyboardFirstRow);
+
+        keyboardSecondRow.add(new KeyboardButton("Информация"));
         keyboard.add(keyboardSecondRow);
-        // и устанваливаем этот список нашей клавиатуре
+
         replyKeyboardMarkup.setKeyboard(keyboard);
     }
-
-//    private void setInline() {
-//        List<List<InlineKeyboardButton>> buttons = new ArrayList<>();
-//        List<InlineKeyboardButton> buttons1 = new ArrayList<>();
-//        buttons1.add(new InlineKeyboardButton().setText("Кнопка").setCallbackData(17));
-//        buttons.add(buttons1);
-//
-//        InlineKeyboardMarkup markupKeyboard = new InlineKeyboardMarkup();
-//        markupKeyboard.setKeyboard(buttons);
-//    }
-//
-//    public synchronized void answerCallbackQuery(String callbackId, String message) {
-//        AnswerCallbackQuery answer = new AnswerCallbackQuery();
-//        answer.setCallbackQueryId(callbackId);
-//        answer.setText(message);
-//        answer.setShowAlert(true);
-//        try {
-//            answerCallbackQuery(answer);
-//        } catch (TelegramApiException e) {
-//            e.printStackTrace();
-//        }
-//    }
-
 }

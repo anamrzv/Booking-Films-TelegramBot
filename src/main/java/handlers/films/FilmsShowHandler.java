@@ -7,6 +7,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,48 +33,45 @@ public class FilmsShowHandler implements InputMessageHandler {
     }
 
     private SendMessage processUserInput(Message message) {
+        SendMessage sendMessage = new SendMessage();
+        sendMessage.enableMarkdown(true);
+        sendMessage.setChatId(message.getChatId().toString());
+        sendMessage.setText(message.getText());
+        sendMessage.setReplyMarkup(getInlineMessageButtons());
         int userId = message.getFrom().getId();
-        String chatId = message.getChatId().toString();
-
-
-        SendMessage replyToUser = new SendMessage();
-        replyToUser.setText("Фильм Однажды в голливуде");
-        replyToUser.setChatId(chatId);
-        replyToUser.setReplyMarkup(getInlineMessageButtons());
-
         userDataCache.setUsersCurrentBotState(userId, BotState.SHOW_FILMS);
-
-        return replyToUser;
+        return sendMessage;
     }
 
-    private InlineKeyboardMarkup getInlineMessageButtons(){
+    private InlineKeyboardMarkup getInlineMessageButtons() {
+
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
-
-        InlineKeyboardButton descriptionButton = new InlineKeyboardButton();
-        descriptionButton.setText("Описание фильма");
-        descriptionButton.setCallbackData("Фильм 'Однажды в Голливуде' ......");
-
-        InlineKeyboardButton videoButton = new InlineKeyboardButton();
-        videoButton.setText("Трейлер");
-        videoButton.setCallbackData("Трейлер к фильму 'Однажды в Голливуде' ......");
+        List<InlineKeyboardButton> keyboardButtonsRow1 = new ArrayList<>();
+        List<InlineKeyboardButton> keyboardButtonsRow2 = new ArrayList<>();
 
         InlineKeyboardButton sessionsButton = new InlineKeyboardButton();
         sessionsButton.setText("Сеансы");
-        sessionsButton.setCallbackData("Сеансы к фильму 'Однажды в Голливуде' ......");
+        sessionsButton.setCallbackData("sessions");
+        keyboardButtonsRow1.add(sessionsButton);
 
-        List<InlineKeyboardButton> keyboardButtonsRow1 = new ArrayList<>();
-        keyboardButtonsRow1.add(descriptionButton);
-        keyboardButtonsRow1.add(videoButton);
+        InlineKeyboardButton videoButton = new InlineKeyboardButton();
+        videoButton.setText("Трейлер");
+        videoButton.setCallbackData("trailer");
+        keyboardButtonsRow2.add(videoButton);
 
-        List<InlineKeyboardButton> keyboardButtonsRow2 = new ArrayList<>();
-        keyboardButtonsRow2.add(sessionsButton);
+        InlineKeyboardButton descriptionButton = new InlineKeyboardButton();
+        descriptionButton.setText("Описание фильма");
+        descriptionButton.setCallbackData("description");
+        keyboardButtonsRow2.add(descriptionButton);
 
-        List<List<InlineKeyboardButton>> rowList= new ArrayList<>();
+        List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
         rowList.add(keyboardButtonsRow1);
         rowList.add(keyboardButtonsRow2);
 
         inlineKeyboardMarkup.setKeyboard(rowList);
-
         return inlineKeyboardMarkup;
     }
+
+
+
 }
