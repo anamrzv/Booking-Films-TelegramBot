@@ -1,52 +1,46 @@
-import org.telegram.telegrambots.bots.TelegramLongPollingBot;
+package handlers;
+
+import bot.BotState;
+import cache.DataCache;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Bot extends TelegramLongPollingBot {
+public class ShowInfoHandler implements InputMessageHandler{
+    private DataCache userDataCache;
 
-    private final String BOT_NAME;
-    private final String BOT_TOKEN;
-    private final TelegramFacade telegramFacade = new TelegramFacade();
-
-    public Bot(String botName, String botToken) {
-        super();
-        this.BOT_NAME = botName;
-        this.BOT_TOKEN = botToken;
+    public ShowInfoHandler(DataCache userDataCache) {
+        this.userDataCache = userDataCache;
     }
 
     @Override
-    public String getBotToken() {
-        return BOT_TOKEN;
+    public SendMessage handle(Message message) {
+        return processUserInput(message);
     }
 
     @Override
-    public String getBotUsername() {
-        return BOT_NAME;
+    public BotState getHandlerName() {
+        return BotState.SHOW_INFO;
     }
 
-    @Override
-    public void onUpdateReceived(Update update) {
-        SendMessage answer = telegramFacade.handleUpdate(update);
-        answer.enableMarkdown(true);
-        try {
-            execute(answer);
-            setButtons(answer);
-        } catch (TelegramApiException e) {
-            e.printStackTrace();
-        }
+    private SendMessage processUserInput(Message message) {
+        SendMessage sendMessage = new SendMessage();
+        sendMessage.enableMarkdown(true);
+        sendMessage.setChatId(message.getChatId().toString());
+        sendMessage.setText(message.getText());
+        sendMessage.setReplyMarkup(getReplyKeyboard());
+        int userId = message.getFrom().getId();
+        userDataCache.setUsersCurrentBotState(userId, BotState.SHOW_INFO);
+        return sendMessage;
     }
 
-    public synchronized void setButtons(SendMessage sendMessage) {
-
+    private ReplyKeyboardMarkup getReplyKeyboard() {
         ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
-        sendMessage.setReplyMarkup(replyKeyboardMarkup);
         replyKeyboardMarkup.setSelective(true);
         replyKeyboardMarkup.setResizeKeyboard(true);
         replyKeyboardMarkup.setOneTimeKeyboard(false);
@@ -62,5 +56,8 @@ public class Bot extends TelegramLongPollingBot {
         keyboard.add(keyboardSecondRow);
 
         replyKeyboardMarkup.setKeyboard(keyboard);
+
+        return replyKeyboardMarkup;
     }
 }
+

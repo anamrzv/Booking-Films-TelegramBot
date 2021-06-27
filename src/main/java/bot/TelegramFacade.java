@@ -1,9 +1,11 @@
+package bot;
+
 import cache.DataCache;
 import cache.UserDataCache;
-import handlers.BotState;
-import handlers.BotStateContext;
+import handlers.DataBaseManager;
+import handlers.FilmsShowHandler;
 import handlers.InputMessageHandler;
-import handlers.films.FilmsShowHandler;
+import handlers.StartPageHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
@@ -18,12 +20,11 @@ public class TelegramFacade {
     private DataCache userDataCache = new UserDataCache();
     private final List<InputMessageHandler> messageHandlers;
     private BotStateContext botStateContext;
-    //private CallbackQueryFacade callbackQueryFacade = new CallbackQueryFacade();
-
 
     public TelegramFacade() {
         messageHandlers = new LinkedList<>();
         messageHandlers.add(new FilmsShowHandler(userDataCache));
+        messageHandlers.add(new StartPageHandler(userDataCache));
         botStateContext = new BotStateContext(messageHandlers);
     }
 
@@ -72,20 +73,26 @@ public class TelegramFacade {
     }
 
     private SendMessage processCallbackQuery(CallbackQuery buttonQuery) {
-        SendMessage callBackAnswer;
+        final long chatId = buttonQuery.getMessage().getChatId();
+        final int userId = buttonQuery.getFrom().getId();
+        SendMessage callBackAnswer = null;
         if (buttonQuery.getData().equals("sessions")) {
-            callBackAnswer = sendAnswerCallbackQuery("завтра", buttonQuery); //Примеры
-        } else {
-            callBackAnswer = sendAnswerCallbackQuery("вчера", buttonQuery);
-        }
+            callBackAnswer = sendAnswerCallbackQuery("Сеансы на данный фильм", buttonQuery);
+            userDataCache.setUsersCurrentBotState(userId, BotState.SHOW_SESSIONS);
+        } else if (buttonQuery.getData().equals("description")) {
+            callBackAnswer = sendAnswerCallbackQuery("Описание фильма", buttonQuery);
+            userDataCache.setUsersCurrentBotState(userId, BotState.SHOW_DESCRIPTION);
+        } else if (buttonQuery.getData().equals("trailer")) {
+            callBackAnswer = sendAnswerCallbackQuery("Трейлер фильма", buttonQuery);
+            userDataCache.setUsersCurrentBotState(userId, BotState.SHOW_VIDEO);
+        } else userDataCache.setUsersCurrentBotState(userId, BotState.START_PAGE);
         return callBackAnswer;
     }
 
     private SendMessage sendAnswerCallbackQuery(String text, CallbackQuery callbackquery) {
         SendMessage answerCallbackQuery = new SendMessage();
         answerCallbackQuery.setChatId(callbackquery.getMessage().getChatId().toString());
-                answerCallbackQuery.setText(text);
+        answerCallbackQuery.setText(text);
         return answerCallbackQuery;
     }
-
 }

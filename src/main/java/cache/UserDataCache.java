@@ -1,6 +1,6 @@
 package cache;
 
-import handlers.BotState;
+import bot.BotState;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -10,6 +10,7 @@ import java.util.Map;
  */
 public class UserDataCache implements DataCache {
     private Map<Integer, BotState> userBotStates = new HashMap<>();
+    private Map<Integer, UserProfileData> usersProfileData = new HashMap<>();
 
     @Override
     public void setUsersCurrentBotState(int userId, BotState botState) {
@@ -24,4 +25,18 @@ public class UserDataCache implements DataCache {
         }
         return botState;
     }
+
+    @Override
+    public UserProfileData getUserProfileData(int userId) {
+        UserProfileData data = usersProfileData.get(userId);
+        if (data==null) data = new UserProfileData();
+        return data;
+    }
+
+    @Override
+    public void setUserProfileData(int userId, UserProfileData data) {
+        usersProfileData.put(userId, data);
+    }
+
+
 }
