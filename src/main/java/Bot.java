@@ -37,30 +37,8 @@ public class Bot extends TelegramLongPollingBot {
         answer.enableMarkdown(true);
         try {
             execute(answer);
-            setButtons(answer);
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
-    }
-
-    public synchronized void setButtons(SendMessage sendMessage) {
-
-        ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
-        sendMessage.setReplyMarkup(replyKeyboardMarkup);
-        replyKeyboardMarkup.setSelective(true);
-        replyKeyboardMarkup.setResizeKeyboard(true);
-        replyKeyboardMarkup.setOneTimeKeyboard(false);
-
-        List<KeyboardRow> keyboard = new ArrayList<>();
-        KeyboardRow keyboardFirstRow = new KeyboardRow();
-        KeyboardRow keyboardSecondRow = new KeyboardRow();
-
-        keyboardFirstRow.add(new KeyboardButton("Фильмы"));
-        keyboard.add(keyboardFirstRow);
-
-        keyboardSecondRow.add(new KeyboardButton("Информация"));
-        keyboard.add(keyboardSecondRow);
-
-        replyKeyboardMarkup.setKeyboard(keyboard);
     }
 }
