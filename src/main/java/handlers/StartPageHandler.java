@@ -32,7 +32,7 @@ public class StartPageHandler implements InputMessageHandler{
         SendMessage sendMessage = new SendMessage();
         sendMessage.enableMarkdown(true);
         sendMessage.setChatId(message.getChatId().toString());
-        sendMessage.setText(message.getText());
+        sendMessage.setText("Привет! Я - бот, который поможет тебе забронировать места в кинотеатре! Нажми на кнопку 'Фильмы', чтобы посмотреть, какие фильмы есть в прокате!");
         sendMessage.setReplyMarkup(getReplyKeyboard());
         int userId = message.getFrom().getId();
         userDataCache.setUsersCurrentBotState(userId, BotState.START_PAGE);
