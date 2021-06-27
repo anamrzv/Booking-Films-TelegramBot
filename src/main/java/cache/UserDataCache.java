@@ -1,6 +1,6 @@
 package cache;
 
-import handlers.BotState;
+import bot.BotState;
 
 import java.util.HashMap;
 import java.util.Map;

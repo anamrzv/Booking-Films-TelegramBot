@@ -1,5 +1,5 @@
 package cache;
-import handlers.BotState;
+import bot.BotState;
 
 public interface DataCache {
     void setUsersCurrentBotState(int userId, BotState botState);

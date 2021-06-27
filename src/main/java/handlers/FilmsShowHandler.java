@@ -1,15 +1,15 @@
-package handlers.films;
+package handlers;
 
+import bot.BotState;
 import cache.DataCache;
-import handlers.BotState;
-import handlers.InputMessageHandler;
+import cache.Film;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -17,6 +17,10 @@ import java.util.List;
  */
 public class FilmsShowHandler implements InputMessageHandler {
     private DataCache userDataCache;
+    private DataBaseManager manager;
+    private List<String> titlesOfFilms= new LinkedList<>();
+    private List<Film> films;
+    private boolean iterationIsGoingOn;
 
     public FilmsShowHandler(DataCache userDataCache) {
         this.userDataCache = userDataCache;
@@ -33,14 +37,35 @@ public class FilmsShowHandler implements InputMessageHandler {
     }
 
     private SendMessage processUserInput(Message message) {
-        SendMessage sendMessage = new SendMessage();
-        sendMessage.enableMarkdown(true);
-        sendMessage.setChatId(message.getChatId().toString());
-        sendMessage.setText(message.getText());
-        sendMessage.setReplyMarkup(getInlineMessageButtons());
-        int userId = message.getFrom().getId();
-        userDataCache.setUsersCurrentBotState(userId, BotState.SHOW_FILMS);
-        return sendMessage;
+        if (!iterationIsGoingOn) {
+            int userId = message.getFrom().getId();
+            userDataCache.setUsersCurrentBotState(userId, BotState.SHOW_FILMS);
+            manager = DataBaseManager.getInstance();
+            films = manager.getListOfFilms();
+            for (Film film : films) {
+                titlesOfFilms.add(film.getTitle());
+            }
+            if (!films.isEmpty()) iterationIsGoingOn = true;
+        }
+        if (films.isEmpty() && iterationIsGoingOn == false) {
+            SendMessage answer = new SendMessage(message.getChatId().toString(), "Пока фильмов нет:(");
+            return answer;
+        } else {
+            String film = titlesOfFilms.get(0);
+            SendMessage answer = sendFilmBlocks(film, message);
+            titlesOfFilms.remove(film);
+            if (titlesOfFilms.isEmpty()) iterationIsGoingOn = false;
+            return answer;
+        }
+    }
+
+    private SendMessage sendFilmBlocks(String filmName, Message message) {
+        SendMessage filmBlock = new SendMessage();
+        filmBlock.enableMarkdown(true);
+        filmBlock.setChatId(message.getChatId().toString());
+        filmBlock.setText(filmName);
+        filmBlock.setReplyMarkup(getInlineMessageButtons());
+        return filmBlock;
     }
 
     private InlineKeyboardMarkup getInlineMessageButtons() {
@@ -50,7 +75,7 @@ public class FilmsShowHandler implements InputMessageHandler {
         List<InlineKeyboardButton> keyboardButtonsRow2 = new ArrayList<>();
 
         InlineKeyboardButton sessionsButton = new InlineKeyboardButton();
-        sessionsButton.setText("Сеансы");
+        sessionsButton.setText("Сеансы фильма");
         sessionsButton.setCallbackData("sessions");
         keyboardButtonsRow1.add(sessionsButton);
 

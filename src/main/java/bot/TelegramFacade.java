@@ -1,10 +1,11 @@
+package bot;
+
 import cache.DataCache;
 import cache.UserDataCache;
-import handlers.BotState;
-import handlers.BotStateContext;
+import handlers.DataBaseManager;
+import handlers.FilmsShowHandler;
 import handlers.InputMessageHandler;
 import handlers.StartPageHandler;
-import handlers.films.FilmsShowHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
@@ -76,15 +77,15 @@ public class TelegramFacade {
         final int userId = buttonQuery.getFrom().getId();
         SendMessage callBackAnswer = null;
         if (buttonQuery.getData().equals("sessions")) {
-            callBackAnswer = sendAnswerCallbackQuery("Сеансы на данный фильм", buttonQuery); //Примеры
+            callBackAnswer = sendAnswerCallbackQuery("Сеансы на данный фильм", buttonQuery);
             userDataCache.setUsersCurrentBotState(userId, BotState.SHOW_SESSIONS);
         } else if (buttonQuery.getData().equals("description")) {
             callBackAnswer = sendAnswerCallbackQuery("Описание фильма", buttonQuery);
             userDataCache.setUsersCurrentBotState(userId, BotState.SHOW_DESCRIPTION);
-        } else if (buttonQuery.getData().equals("trailer")){
+        } else if (buttonQuery.getData().equals("trailer")) {
             callBackAnswer = sendAnswerCallbackQuery("Трейлер фильма", buttonQuery);
             userDataCache.setUsersCurrentBotState(userId, BotState.SHOW_VIDEO);
-        }  else userDataCache.setUsersCurrentBotState(userId, BotState.START_PAGE);
+        } else userDataCache.setUsersCurrentBotState(userId, BotState.START_PAGE);
         return callBackAnswer;
     }
 

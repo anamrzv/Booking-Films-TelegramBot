@@ -1,4 +1,4 @@
-package handlers;
+package bot;
 
 public enum BotState {
     SHOW_FILMS,
