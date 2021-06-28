@@ -1,11 +1,14 @@
 package handlers;
 
-import cache.Film;
-import lombok.Getter;
+import properties.Film;
+import properties.Session;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.sql.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -19,6 +22,8 @@ public class DataBaseManager {
     private Scanner scanner;
     private static DataBaseManager instance;
     private List<Film> listOfFilms = new LinkedList<>();
+    private List<Session> listOfSessions = new LinkedList<>();
+    private List<Film> filmsNotInRent = new LinkedList<>();
 
     private DataBaseManager() {
         try {
@@ -67,8 +72,9 @@ public class DataBaseManager {
             ResultSet result = preparedStatement.executeQuery();
             if (result != null) {
                 while (result.next()) {
-                    Film film = handleDBResult(result);
-                    listOfFilms.add(film);
+                    Film film = handleDBResultAsFilm(result);
+                    if (film.isInRent()) listOfFilms.add(film);
+                    else filmsNotInRent.add(film);
                 }
                 preparedStatement.close();
             }
@@ -79,21 +85,53 @@ public class DataBaseManager {
         }
     }
 
-    private Film handleDBResult(ResultSet result) {
+    public List<Session> getSessionsFromDB() {
+        try {
+            listOfSessions.clear();
+            PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM SEANCE");
+            ResultSet result = preparedStatement.executeQuery();
+            if (result != null) {
+                while (result.next()) {
+                    Session session = handleDBResultAsSession(result);
+                    listOfSessions.add(session);
+                }
+                preparedStatement.close();
+            }
+            return listOfSessions;
+        } catch (SQLException e) {
+            System.out.println("Error while accessing DB");
+            return null;
+        }
+    }
+
+    private Film handleDBResultAsFilm(ResultSet result) {
         try {
             String description = result.getString("description");
             String posterName = result.getString("poster_name");
             String title = result.getString("title");
             String trailer = result.getString("trailer_url");
             Boolean isInRent = result.getBoolean("in_rent");
-            return new Film(title, description, posterName, trailer, isInRent);
+            int id = result.getInt("id");
+            return new Film(id, title, description, posterName, trailer, isInRent);
         } catch (SQLException e) {
             System.out.println("Ошибка при чтении коллекции с базы данных.");
             return null;
         }
     }
 
-    public List<Film> getListOfFilms(){
+    private Session handleDBResultAsSession(ResultSet result) {
+        try {
+            int filmId = result.getInt("film_id");
+            Timestamp date = result.getTimestamp("date");
+            int id = result.getInt("id");
+            return new Session(id, date.toLocalDateTime(), filmId);
+        } catch (SQLException e) {
+            System.out.println("Ошибка при чтении коллекции с базы данных.");
+            return null;
+        }
+    }
+
+    public List<Film> getListOfFilms() {
         return listOfFilms;
     }
 
