@@ -32,7 +32,13 @@ public class ShowInfoHandler implements InputMessageHandler{
         SendMessage sendMessage = new SendMessage();
         sendMessage.enableMarkdown(true);
         sendMessage.setChatId(message.getChatId().toString());
-        sendMessage.setText(message.getText());
+        sendMessage.setText("Кинотеатр \"ob6\" " +
+                "\nРады видеть Вас в нашем кинотеатре!"+
+                "\n!ссылка на сайт!"+
+                "\nНажмите на кнопку 'Фильмы', чтобы посмотреть, какие фильмы есть в прокате"+
+                "\nЗатем Вы можете выбрать сеансы и приступить к бронированию мест " +
+                "или посмотреть интересующую информацию про фильм"
+        );
         sendMessage.setReplyMarkup(getReplyKeyboard());
         int userId = message.getFrom().getId();
         userDataCache.setUsersCurrentBotState(userId, BotState.SHOW_INFO);

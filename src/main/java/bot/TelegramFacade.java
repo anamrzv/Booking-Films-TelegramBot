@@ -28,6 +28,7 @@ public class TelegramFacade {
         messageHandlers = new LinkedList<>();
         messageHandlers.add(new FilmsShowHandler(userDataCache));
         messageHandlers.add(new StartPageHandler(userDataCache));
+        messageHandlers.add(new ShowInfoHandler(userDataCache));
         botStateContext = new BotStateContext(messageHandlers);
     }
 
