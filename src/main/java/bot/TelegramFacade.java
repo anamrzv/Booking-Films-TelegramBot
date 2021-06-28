@@ -4,6 +4,8 @@ import cache.DataCache;
 import cache.UserDataCache;
 import handlers.*;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -11,12 +13,13 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import java.util.LinkedList;
 import java.util.List;
 
-@Slf4j
+
 public class TelegramFacade {
     private DataCache userDataCache = new UserDataCache();
     private final List<InputMessageHandler> messageHandlers;
     private BotStateContext botStateContext;
     private CallBackQueryFacade callBackQueryFacade = new CallBackQueryFacade(userDataCache);
+
 
     public TelegramFacade() {
         messageHandlers = new LinkedList<>();
@@ -33,13 +36,15 @@ public class TelegramFacade {
         SendMessage replyMessage = null;
         Message message = update.getMessage();
 
+        final Logger log = LoggerFactory.getLogger(TelegramFacade.class);
+
         if (message != null && message.hasText()) {
-            log.info("New message from User:{}, chatID:{}, with text: {}",
+            log.info("New message from User: {}, chatID: {}, with text: {}",
                     message.getFrom().getUserName(), message.getChatId(), message.getText());
             replyMessage = handleInputMessage(message);
         }
         if (update.hasCallbackQuery()) {
-            log.info("New callbackQuery from User:{}, with data: {}",
+            log.info("New callbackQuery from User: {}, with data: {}",
                     update.getCallbackQuery().getFrom().getUserName(), update.getCallbackQuery().getData());
             return callBackQueryFacade.processCallbackQuery(update.getCallbackQuery());
         }
