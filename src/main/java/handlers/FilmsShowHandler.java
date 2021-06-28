@@ -64,11 +64,11 @@ public class FilmsShowHandler implements InputMessageHandler {
         filmBlock.enableMarkdown(true);
         filmBlock.setChatId(message.getChatId().toString());
         filmBlock.setText(filmName);
-        filmBlock.setReplyMarkup(getInlineMessageButtons());
+        filmBlock.setReplyMarkup(getInlineMessageButtons(filmName));
         return filmBlock;
     }
 
-    private InlineKeyboardMarkup getInlineMessageButtons() {
+    private InlineKeyboardMarkup getInlineMessageButtons(String filmName) {
 
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
         List<InlineKeyboardButton> keyboardButtonsRow1 = new ArrayList<>();
@@ -76,17 +76,17 @@ public class FilmsShowHandler implements InputMessageHandler {
 
         InlineKeyboardButton sessionsButton = new InlineKeyboardButton();
         sessionsButton.setText("Сеансы фильма");
-        sessionsButton.setCallbackData("sessions");
+        sessionsButton.setCallbackData("sessions|"+filmName);
         keyboardButtonsRow1.add(sessionsButton);
 
         InlineKeyboardButton videoButton = new InlineKeyboardButton();
         videoButton.setText("Трейлер");
-        videoButton.setCallbackData("trailer");
+        videoButton.setCallbackData("trailer|"+filmName);
         keyboardButtonsRow2.add(videoButton);
 
         InlineKeyboardButton descriptionButton = new InlineKeyboardButton();
         descriptionButton.setText("Описание фильма");
-        descriptionButton.setCallbackData("description");
+        descriptionButton.setCallbackData("description|"+filmName);
         keyboardButtonsRow2.add(descriptionButton);
 
         List<List<InlineKeyboardButton>> rowList = new ArrayList<>();

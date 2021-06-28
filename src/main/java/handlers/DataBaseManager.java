@@ -62,6 +62,7 @@ public class DataBaseManager {
 
     public List<Film> getFilmsFromDB() {
         try {
+            listOfFilms.clear();
             PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM FILM");
             ResultSet result = preparedStatement.executeQuery();
             if (result != null) {
