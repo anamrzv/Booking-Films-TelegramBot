@@ -2,11 +2,13 @@ package handlers;
 
 import bot.BotState;
 import cache.DataCache;
-import properties.Film;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
+import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
+import properties.Film;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -18,7 +20,7 @@ import java.util.List;
 public class FilmsShowHandler implements InputMessageHandler {
     private DataCache userDataCache;
     private DataBaseManager manager;
-    private List<String> titlesOfFilms= new LinkedList<>();
+    private List<String> titlesOfFilms = new LinkedList<>();
     private List<Film> films;
     private boolean iterationIsGoingOn;
 
@@ -27,16 +29,19 @@ public class FilmsShowHandler implements InputMessageHandler {
     }
 
     @Override
-    public SendMessage handle(Message message) {
-        return processUserInput(message);
+    public SendMessage handleAsMessage(Message message) {
+        return null;
     }
+
+    @Override
+    public SendPhoto handleAsPhoto(Message message) {return processUserInput(message);}
 
     @Override
     public BotState getHandlerName() {
         return BotState.SHOW_FILMS;
     }
 
-    private SendMessage processUserInput(Message message) {
+    private SendPhoto processUserInput(Message message) {
         if (!iterationIsGoingOn) {
             int userId = message.getFrom().getId();
             userDataCache.setUsersCurrentBotState(userId, BotState.SHOW_FILMS);
@@ -48,22 +53,25 @@ public class FilmsShowHandler implements InputMessageHandler {
             if (!films.isEmpty()) iterationIsGoingOn = true;
         }
         if (films.isEmpty() && iterationIsGoingOn == false) {
-            SendMessage answer = new SendMessage(message.getChatId().toString(), "Пока фильмов нет:(");
+            SendPhoto answer = new SendPhoto();
+            answer.setChatId(message.getChatId().toString());
+            answer.setPhoto(new InputFile("https://e7.pngegg.com/pngimages/251/931/png-clipart-iphone-emoji-sadness-smiley-emoji-electronics-face.png"));
+            answer.setCaption("Фильмов пока нет:(");
             return answer;
         } else {
             String film = titlesOfFilms.get(0);
-            SendMessage answer = sendFilmBlocks(film, message);
+            SendPhoto answer = sendFilmBlocks(film, message);
             titlesOfFilms.remove(film);
             if (titlesOfFilms.isEmpty()) iterationIsGoingOn = false;
             return answer;
         }
     }
 
-    private SendMessage sendFilmBlocks(String filmName, Message message) {
-        SendMessage filmBlock = new SendMessage();
-        filmBlock.enableMarkdown(true);
+    private SendPhoto sendFilmBlocks(String filmName, Message message) {
+        SendPhoto filmBlock = new SendPhoto();
         filmBlock.setChatId(message.getChatId().toString());
-        filmBlock.setText(filmName);
+        filmBlock.setPhoto(new InputFile("https://sib.fm/storage/article/March2021/IDsV2DD5Qhwj5kWTpfYG.jpeg")); //Добавить загрузку фоток с бд/сервера
+        filmBlock.setCaption(filmName);
         filmBlock.setReplyMarkup(getInlineMessageButtons(filmName));
         return filmBlock;
     }
@@ -76,17 +84,17 @@ public class FilmsShowHandler implements InputMessageHandler {
 
         InlineKeyboardButton sessionsButton = new InlineKeyboardButton();
         sessionsButton.setText("Сеансы фильма");
-        sessionsButton.setCallbackData("sessions|"+filmName);
+        sessionsButton.setCallbackData("sessions|" + filmName);
         keyboardButtonsRow1.add(sessionsButton);
 
         InlineKeyboardButton videoButton = new InlineKeyboardButton();
         videoButton.setText("Трейлер");
-        videoButton.setCallbackData("trailer|"+filmName);
+        videoButton.setCallbackData("trailer|" + filmName);
         keyboardButtonsRow2.add(videoButton);
 
         InlineKeyboardButton descriptionButton = new InlineKeyboardButton();
         descriptionButton.setText("Описание фильма");
-        descriptionButton.setCallbackData("description|"+filmName);
+        descriptionButton.setCallbackData("description|" + filmName);
         keyboardButtonsRow2.add(descriptionButton);
 
         List<List<InlineKeyboardButton>> rowList = new ArrayList<>();

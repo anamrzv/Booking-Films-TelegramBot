@@ -3,6 +3,7 @@ package handlers;
 import bot.BotState;
 import cache.DataCache;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
@@ -19,7 +20,10 @@ public class ShowInfoHandler implements InputMessageHandler{
     }
 
     @Override
-    public SendMessage handle(Message message) {
+    public SendPhoto handleAsPhoto(Message message){ return null;}
+
+    @Override
+    public SendMessage handleAsMessage(Message message) {
         return processUserInput(message);
     }
 

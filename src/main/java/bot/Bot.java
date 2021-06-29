@@ -3,6 +3,7 @@ package bot;
 import handlers.DataBaseManager;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
@@ -35,8 +36,7 @@ public class Bot extends TelegramLongPollingBot {
                 DataBaseManager manager = DataBaseManager.getInstance();
                 manager.getFilmsFromDB();
                 for (int loopSize = manager.getListOfFilms().size(); loopSize > 0; loopSize--) {
-                    SendMessage answer = telegramFacade.handleUpdate(update);
-                    answer.enableMarkdown(true);
+                    SendPhoto answer = telegramFacade.handleUpdateWithPhoto(update);
                     try {
                         execute(answer);
                     } catch (TelegramApiException e) {
