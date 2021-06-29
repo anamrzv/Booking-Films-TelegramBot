@@ -7,6 +7,7 @@ import handlers.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
@@ -74,4 +75,20 @@ public class TelegramFacade {
         return replyMessage;
     }
 
+    public SendPhoto handleUpdateWithPhoto(Update update) {
+        SendPhoto replyMessage = null;
+        Message message = update.getMessage();
+        BotState botState;
+
+        if (message != null && message.hasText()) {
+            log.info("New message from User:{}, chatID:{}, with text: {}",
+                    message.getFrom().getUserName(), message.getChatId(), message.getText());
+            String inputMessage = message.getText();
+            int userID = message.getFrom().getId();
+            botState = BotState.SHOW_FILMS;
+            userDataCache.setUsersCurrentBotState(userID, botState);
+            replyMessage = botStateContext.processInputMessagePhoto(botState, message);
+        }
+        return replyMessage;
+    }
 }

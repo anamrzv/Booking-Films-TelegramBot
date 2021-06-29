@@ -1,8 +1,8 @@
 package bot;
 
-import bot.BotState;
 import handlers.InputMessageHandler;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
 import java.util.HashMap;
@@ -21,7 +21,12 @@ public class BotStateContext {
 
     public SendMessage processInputMessage(BotState currentState, Message message) {
         InputMessageHandler currentMessageHandler = findMessageHandler(currentState);
-        return currentMessageHandler.handle(message);
+        return currentMessageHandler.handleAsMessage(message);
+    }
+
+    public SendPhoto processInputMessagePhoto(BotState currentState, Message message) {
+        InputMessageHandler currentMessageHandler = findMessageHandler(currentState);
+        return currentMessageHandler.handleAsPhoto(message);
     }
 
     private InputMessageHandler findMessageHandler(BotState currentState) {
