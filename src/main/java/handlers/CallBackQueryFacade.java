@@ -102,7 +102,7 @@ public class CallBackQueryFacade {
             List<InlineKeyboardButton> keyboardButtonsRow1 = new ArrayList<>();
             InlineKeyboardButton Button1 = new InlineKeyboardButton();
             Button1.setText(listOfSessionsForFilmById.get(i).getDay());
-            Button1.setCallbackData("time|" + listOfSessionsForFilmById.get(i));
+            Button1.setCallbackData("time|" + listOfSessionsForFilmById.get(i).getDay() + " " + listOfSessionsForFilmById.get(i).getFilmId());
             keyboardButtonsRow1.add(Button1);
             rowList.add(keyboardButtonsRow1);
         }
@@ -111,35 +111,26 @@ public class CallBackQueryFacade {
         return callBackAnswer;
     }
 
-    private SendMessage processTimesForFilm(SendMessage callBackAnswer, String filmName, List<Film> films) {
+    private SendMessage processTimesForFilm(SendMessage callBackAnswer, String dateAndFilm, List<Film> films) {
+        String date = dateAndFilm.substring(0, dateAndFilm.indexOf(" "));
+        int filmID = Integer.parseInt(dateAndFilm.substring(dateAndFilm.indexOf(" ") + 1));
 
-        int filmId = -1;
         List<Session> listOfSessions = DataBaseManager.getInstance().getSessionsFromDB();
-        List<Session> listOfSessionsForFilmById = null;
+        List<Session> listOfSessionsForFilmById = new ArrayList<>();
 
-        Iterator<Film> filmIterator = films.listIterator();
-        while (filmIterator.hasNext()) {
-            Film newFilm = filmIterator.next();
-            if (newFilm.getTitle().equals(filmName)) {
-                filmId = newFilm.getId();
-                break;
-            }
+        for (int i = 0; i < listOfSessions.size(); i++) {
+            if (date.equals(listOfSessions.get(i).getDay()) && listOfSessions.get(i).getFilmId() == filmID)
+                listOfSessionsForFilmById.add(listOfSessions.get(i));
         }
-
-        int finalFilmId = filmId;
-        
-
-        listOfSessionsForFilmById = listOfSessions.stream()
-                .filter(session -> session.getFilmId() == finalFilmId)
-                .collect(Collectors.toList());
 
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
         for (int i = 0; i < listOfSessionsForFilmById.size(); i++) {
             List<InlineKeyboardButton> keyboardButtonsRow = new ArrayList<>();
             InlineKeyboardButton button = new InlineKeyboardButton();
-            button.setText("Integer.toString(listOfSessionsForFilmById.get(i).getDateAndTime().getHour())");
-            button.setCallbackData("listOfSessionsForFilmById.get(i).getDateAndTime()");
+            button.setText((Integer.toString(listOfSessionsForFilmById.get(i).getDateAndTime().getHour()))
+                    + ":" + Integer.toString(listOfSessionsForFilmById.get(i).getDateAndTime().getMinute()));
+            button.setCallbackData("ссылка");
             keyboardButtonsRow.add(button);
             rowList.add(keyboardButtonsRow);
         }
@@ -147,7 +138,6 @@ public class CallBackQueryFacade {
         callBackAnswer.setReplyMarkup(inlineKeyboardMarkup);
         return callBackAnswer;
     }
-
 
     private SendMessage sendAnswerCallbackQuery(String text, CallbackQuery callbackquery) {
         SendMessage answerCallbackQuery = new SendMessage();

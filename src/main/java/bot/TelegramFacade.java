@@ -3,7 +3,7 @@ package bot;
 import cache.DataCache;
 import cache.UserDataCache;
 import handlers.*;
-import lombok.extern.slf4j.Slf4j;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -36,7 +36,7 @@ public class TelegramFacade {
         SendMessage replyMessage = null;
         Message message = update.getMessage();
 
-        final Logger log = LoggerFactory.getLogger(TelegramFacade.class);
+        Logger log = LoggerFactory.getLogger(TelegramFacade.class);
 
         if (message != null && message.hasText()) {
             log.info("New message from User: {}, chatID: {}, with text: {}",
