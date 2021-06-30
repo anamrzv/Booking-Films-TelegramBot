@@ -37,7 +37,7 @@ public class CallBackQueryFacade {
             callBackAnswer = processSessionsForFilm(callBackAnswer, filmName, films);
             userDataCache.setUsersCurrentBotState(userId, BotState.SHOW_SESSIONS);
         } else if (option.equals("time")) {
-            callBackAnswer = sendAnswerCallbackQuery("Выберите время сеанса: " + "\n", buttonQuery);
+            callBackAnswer = sendAnswerCallbackQuery("Выберите время сеанса фильма " + "\n", buttonQuery);
             callBackAnswer = processTimesForFilm(callBackAnswer, filmName, films);
             userDataCache.setUsersCurrentBotState(userId, BotState.SHOW_TIME);
         } else if (option.equals("description")) {
@@ -98,16 +98,19 @@ public class CallBackQueryFacade {
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
 
-        for (int i = 0; i < listOfSessionsForFilmById.size(); i++) {
-            List<InlineKeyboardButton> keyboardButtonsRow1 = new ArrayList<>();
-            InlineKeyboardButton Button1 = new InlineKeyboardButton();
-            Button1.setText(listOfSessionsForFilmById.get(i).getDay());
-            Button1.setCallbackData("time|" + listOfSessionsForFilmById.get(i).getDay() + " " + listOfSessionsForFilmById.get(i).getFilmId());
-            keyboardButtonsRow1.add(Button1);
-            rowList.add(keyboardButtonsRow1);
+        if (listOfSessionsForFilmById.size() == 0) callBackAnswer.setText("Сеансов на фильм "+filmName+" нет:(");
+        else {
+            for (int i = 0; i < listOfSessionsForFilmById.size(); i++) {
+                List<InlineKeyboardButton> keyboardButtonsRow1 = new ArrayList<>();
+                InlineKeyboardButton Button1 = new InlineKeyboardButton();
+                Button1.setText(listOfSessionsForFilmById.get(i).getDay());
+                Button1.setCallbackData("time|" + listOfSessionsForFilmById.get(i).getDay() + " " + listOfSessionsForFilmById.get(i).getFilmId());
+                keyboardButtonsRow1.add(Button1);
+                rowList.add(keyboardButtonsRow1);
+            }
+            inlineKeyboardMarkup.setKeyboard(rowList);
+            callBackAnswer.setReplyMarkup(inlineKeyboardMarkup);
         }
-        inlineKeyboardMarkup.setKeyboard(rowList);
-        callBackAnswer.setReplyMarkup(inlineKeyboardMarkup);
         return callBackAnswer;
     }
 
@@ -128,14 +131,14 @@ public class CallBackQueryFacade {
         for (int i = 0; i < listOfSessionsForFilmById.size(); i++) {
             List<InlineKeyboardButton> keyboardButtonsRow = new ArrayList<>();
             InlineKeyboardButton button = new InlineKeyboardButton();
-            button.setText((Integer.toString(listOfSessionsForFilmById.get(i).getDateAndTime().getHour()))
-                    + ":" + Integer.toString(listOfSessionsForFilmById.get(i).getDateAndTime().getMinute()));
+            button.setText((listOfSessionsForFilmById.get(i).getTime()));
             button.setCallbackData("ссылка");
             keyboardButtonsRow.add(button);
             rowList.add(keyboardButtonsRow);
         }
         inlineKeyboardMarkup.setKeyboard(rowList);
         callBackAnswer.setReplyMarkup(inlineKeyboardMarkup);
+
         return callBackAnswer;
     }
 

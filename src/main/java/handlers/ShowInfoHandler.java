@@ -36,12 +36,12 @@ public class ShowInfoHandler implements InputMessageHandler{
         SendMessage sendMessage = new SendMessage();
         sendMessage.enableMarkdown(true);
         sendMessage.setChatId(message.getChatId().toString());
-        sendMessage.setText("Кинотеатр \"ob6\" " +
-                "\nРады видеть Вас в нашем кинотеатре!"+
+        sendMessage.setText("_Кинотеатр \"ob6\"_ " +
+                "\nРады видеть Вас в нашем кинотеатре!" +
                 "\n!ссылка на сайт!"+
-                "\nНажмите на кнопку 'Фильмы', чтобы посмотреть, какие фильмы есть в прокате"+
-                "\nКогда выберете сеанс, Вы получите ссылку на страницу с бронированием мест в кинотеатре" +
-                "\nТакже Вы можете посмотреть интересующую информацию про фильм"
+                "\nНажмите на кнопку 'Фильмы', чтобы посмотреть, какие фильмы есть в прокате."+
+                "\nКогда выберете сеанс, Вы получите ссылку на страницу с бронированием мест в кинотеатре." +
+                "\nТакже Вы можете посмотреть интересующую информацию про фильм: его описание и трейлер."
         );
         sendMessage.setReplyMarkup(getReplyKeyboard());
         int userId = message.getFrom().getId();

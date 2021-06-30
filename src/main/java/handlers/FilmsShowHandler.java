@@ -56,7 +56,7 @@ public class FilmsShowHandler implements InputMessageHandler {
             SendPhoto answer = new SendPhoto();
             answer.setChatId(message.getChatId().toString());
             answer.setPhoto(new InputFile("https://e7.pngegg.com/pngimages/251/931/png-clipart-iphone-emoji-sadness-smiley-emoji-electronics-face.png"));
-            answer.setCaption("Фильмов пока нет:(");
+            answer.setCaption("Фильмов пока нет");
             return answer;
         } else {
             String film = titlesOfFilms.get(0);
@@ -70,7 +70,7 @@ public class FilmsShowHandler implements InputMessageHandler {
     private SendPhoto sendFilmBlocks(String filmName, Message message) {
         SendPhoto filmBlock = new SendPhoto();
         filmBlock.setChatId(message.getChatId().toString());
-        filmBlock.setPhoto(new InputFile("https://sib.fm/storage/article/March2021/IDsV2DD5Qhwj5kWTpfYG.jpeg")); //Добавить загрузку фоток с бд/сервера
+        filmBlock.setPhoto(new InputFile("https://image.freepik.com/free-photo/top-view-movie-lettering-on-yellow-background-with-copy-space_23-2148425108.jpg")); //Добавить загрузку фоток с бд/сервера
         filmBlock.setCaption(filmName);
         filmBlock.setReplyMarkup(getInlineMessageButtons(filmName));
         return filmBlock;
@@ -83,17 +83,17 @@ public class FilmsShowHandler implements InputMessageHandler {
         List<InlineKeyboardButton> keyboardButtonsRow2 = new ArrayList<>();
 
         InlineKeyboardButton sessionsButton = new InlineKeyboardButton();
-        sessionsButton.setText("Сеансы фильма");
+        sessionsButton.setText("Выбрать сеанс "+Emoji.TICKET.get());
         sessionsButton.setCallbackData("sessions|" + filmName);
         keyboardButtonsRow1.add(sessionsButton);
 
         InlineKeyboardButton videoButton = new InlineKeyboardButton();
-        videoButton.setText("Трейлер");
+        videoButton.setText("Трейлер "+Emoji.CLAPPER.get());
         videoButton.setCallbackData("trailer|" + filmName);
         keyboardButtonsRow2.add(videoButton);
 
         InlineKeyboardButton descriptionButton = new InlineKeyboardButton();
-        descriptionButton.setText("Описание фильма");
+        descriptionButton.setText("Описание фильма "+Emoji.POPCORN.get());
         descriptionButton.setCallbackData("description|" + filmName);
         keyboardButtonsRow2.add(descriptionButton);
 

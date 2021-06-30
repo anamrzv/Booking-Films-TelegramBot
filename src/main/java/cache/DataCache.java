@@ -6,7 +6,4 @@ public interface DataCache {
 
     BotState getUsersCurrentBotState(int userId);
 
-    UserProfileData getUserProfileData(int userId);
-
-    void setUserProfileData(int userId, UserProfileData data);
 }

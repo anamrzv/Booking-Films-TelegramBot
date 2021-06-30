@@ -81,8 +81,8 @@ public class TelegramFacade {
         BotState botState;
 
         if (message != null && message.hasText()) {
-            log.info("New message from User:{}, chatID:{}, with text: {}",
-                    message.getFrom().getUserName(), message.getChatId(), message.getText());
+            //log.info("New message from User:{}, chatID:{}, with text: {}",
+                    //message.getFrom().getUserName(), message.getChatId(), message.getText());
             String inputMessage = message.getText();
             int userID = message.getFrom().getId();
             botState = BotState.SHOW_FILMS;
