@@ -64,7 +64,11 @@ public class CallBackQueryFacade {
             }
             callBackAnswer = sendAnswerCallbackQuery("Ссылка на трейлер фильма " + filmName + ":\n" + trailerURL, buttonQuery);
             userDataCache.setUsersCurrentBotState(userId, BotState.SHOW_VIDEO);
-        } else userDataCache.setUsersCurrentBotState(userId, BotState.START_PAGE);
+        } else if (option.equals("link")){
+            callBackAnswer = sendAnswerCallbackQuery("Ссылка на бронирование мест: " + "link", buttonQuery);
+            userDataCache.setUsersCurrentBotState(userId, BotState.GIVE_LINK);
+        }
+        else userDataCache.setUsersCurrentBotState(userId, BotState.START_PAGE);
 
 
         return callBackAnswer;
@@ -132,7 +136,7 @@ public class CallBackQueryFacade {
             List<InlineKeyboardButton> keyboardButtonsRow = new ArrayList<>();
             InlineKeyboardButton button = new InlineKeyboardButton();
             button.setText((listOfSessionsForFilmById.get(i).getTime()));
-            button.setCallbackData("ссылка");
+            button.setCallbackData("link|"+filmID);
             keyboardButtonsRow.add(button);
             rowList.add(keyboardButtonsRow);
         }
