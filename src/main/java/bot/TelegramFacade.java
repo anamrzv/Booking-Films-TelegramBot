@@ -61,6 +61,9 @@ public class TelegramFacade {
         SendMessage replyMessage;
         BotState botState;
         switch (inputMessage) {
+            case "/start":
+                botState = BotState.START_PAGE;
+                break;
             case "Фильмы":
                 botState = BotState.SHOW_FILMS;
                 break;
@@ -79,10 +82,10 @@ public class TelegramFacade {
         SendPhoto replyMessage = null;
         Message message = update.getMessage();
         BotState botState;
-
+        Logger log = LoggerFactory.getLogger(TelegramFacade.class);
         if (message != null && message.hasText()) {
-            //log.info("New message from User:{}, chatID:{}, with text: {}",
-                    //message.getFrom().getUserName(), message.getChatId(), message.getText());
+            log.info("New message from User:{}, chatID:{}, with text: {}",
+                    message.getFrom().getUserName(), message.getChatId(), message.getText());
             String inputMessage = message.getText();
             int userID = message.getFrom().getId();
             botState = BotState.SHOW_FILMS;

@@ -62,13 +62,13 @@ public class CallBackQueryFacade {
                     break;
                 }
             }
-            callBackAnswer = sendAnswerCallbackQuery("Ссылка на трейлер фильма " + filmName + ":\n" + trailerURL, buttonQuery);
+            callBackAnswer = sendAnswerCallbackQuery("Ссылка на трейлер фильма " + filmName + ":\n" + "https://www.youtube.com/" + trailerURL, buttonQuery);
             userDataCache.setUsersCurrentBotState(userId, BotState.SHOW_VIDEO);
-        } else if (option.equals("link")){
-            callBackAnswer = sendAnswerCallbackQuery("Ссылка на бронирование мест: " + "link", buttonQuery);
+        } else if (option.equals("link")) {
+            String link = "\nhttp://45.84.225.161/film/" + filmName;
+            callBackAnswer = sendAnswerCallbackQuery("Ссылка на бронирование мест: " + link, buttonQuery);
             userDataCache.setUsersCurrentBotState(userId, BotState.GIVE_LINK);
-        }
-        else userDataCache.setUsersCurrentBotState(userId, BotState.START_PAGE);
+        } else userDataCache.setUsersCurrentBotState(userId, BotState.START_PAGE);
 
 
         return callBackAnswer;
@@ -102,7 +102,7 @@ public class CallBackQueryFacade {
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
 
-        if (listOfSessionsForFilmById.size() == 0) callBackAnswer.setText("Сеансов на фильм "+filmName+" нет:(");
+        if (listOfSessionsForFilmById.size() == 0) callBackAnswer.setText("Сеансов на фильм " + filmName + " нет:(");
         else {
             for (int i = 0; i < listOfSessionsForFilmById.size(); i++) {
                 List<InlineKeyboardButton> keyboardButtonsRow1 = new ArrayList<>();
@@ -136,7 +136,7 @@ public class CallBackQueryFacade {
             List<InlineKeyboardButton> keyboardButtonsRow = new ArrayList<>();
             InlineKeyboardButton button = new InlineKeyboardButton();
             button.setText((listOfSessionsForFilmById.get(i).getTime()));
-            button.setCallbackData("link|"+filmID);
+            button.setCallbackData("link|" + filmID);
             keyboardButtonsRow.add(button);
             rowList.add(keyboardButtonsRow);
         }

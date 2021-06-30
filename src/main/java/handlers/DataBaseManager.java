@@ -1,5 +1,6 @@
 package handlers;
 
+import org.telegram.telegrambots.meta.api.objects.InputFile;
 import properties.Film;
 import properties.Session;
 
@@ -104,7 +105,7 @@ public class DataBaseManager {
         }
     }
 
-    private Film handleDBResultAsFilm(ResultSet result) {
+    public Film handleDBResultAsFilm(ResultSet result) {
         try {
             String description = result.getString("description");
             String posterName = result.getString("poster_name");
@@ -130,6 +131,20 @@ public class DataBaseManager {
             return null;
         }
     }
+//todo метод загрузки с БД фоток????
+
+//    public InputFile getPosterFromBD(ResultSet result) {
+//
+//        try {
+//            InputFile poster = ;
+//            String posterName;
+//            posterName = result.getString("poster_name");
+//        } catch (SQLException e) {
+//            System.out.println("Ошибка при чтении фото с базы данных");
+//        }
+//
+//        return poster;
+//    }
 
     public List<Film> getListOfFilms() {
         return listOfFilms;

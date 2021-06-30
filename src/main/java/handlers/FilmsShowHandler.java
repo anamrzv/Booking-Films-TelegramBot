@@ -10,6 +10,8 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMa
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import properties.Film;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -34,7 +36,9 @@ public class FilmsShowHandler implements InputMessageHandler {
     }
 
     @Override
-    public SendPhoto handleAsPhoto(Message message) {return processUserInput(message);}
+    public SendPhoto handleAsPhoto(Message message) {
+        return processUserInput(message);
+    }
 
     @Override
     public BotState getHandlerName() {
@@ -55,7 +59,7 @@ public class FilmsShowHandler implements InputMessageHandler {
         if (films.isEmpty() && iterationIsGoingOn == false) {
             SendPhoto answer = new SendPhoto();
             answer.setChatId(message.getChatId().toString());
-            answer.setPhoto(new InputFile("https://e7.pngegg.com/pngimages/251/931/png-clipart-iphone-emoji-sadness-smiley-emoji-electronics-face.png"));
+            answer.setPhoto(new InputFile("https://clck.ru/VooJz"));
             answer.setCaption("Фильмов пока нет");
             return answer;
         } else {
@@ -70,10 +74,21 @@ public class FilmsShowHandler implements InputMessageHandler {
     private SendPhoto sendFilmBlocks(String filmName, Message message) {
         SendPhoto filmBlock = new SendPhoto();
         filmBlock.setChatId(message.getChatId().toString());
-        filmBlock.setPhoto(new InputFile("https://image.freepik.com/free-photo/top-view-movie-lettering-on-yellow-background-with-copy-space_23-2148425108.jpg")); //Добавить загрузку фоток с бд/сервера
+        filmBlock.setPhoto(new InputFile(getPosterFromBD(filmName)));
         filmBlock.setCaption(filmName);
         filmBlock.setReplyMarkup(getInlineMessageButtons(filmName));
         return filmBlock;
+    }
+
+    public String getPosterFromBD(String filmName) { //todo добавить загрузку фоток с бд/сервера
+
+        String poster = null;
+        try {
+            poster = "https://image.freepik.com/free-photo/top-view-movie-lettering-on-yellow-background-with-copy-space_23-2148425108.jpg";
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        return poster;
     }
 
     private InlineKeyboardMarkup getInlineMessageButtons(String filmName) {
@@ -83,17 +98,17 @@ public class FilmsShowHandler implements InputMessageHandler {
         List<InlineKeyboardButton> keyboardButtonsRow2 = new ArrayList<>();
 
         InlineKeyboardButton sessionsButton = new InlineKeyboardButton();
-        sessionsButton.setText("Выбрать сеанс "+Emoji.TICKET.get());
+        sessionsButton.setText("Выбрать сеанс " + Emoji.TICKET.get());
         sessionsButton.setCallbackData("sessions|" + filmName);
         keyboardButtonsRow1.add(sessionsButton);
 
         InlineKeyboardButton videoButton = new InlineKeyboardButton();
-        videoButton.setText("Трейлер "+Emoji.CLAPPER.get());
+        videoButton.setText("Трейлер " + Emoji.CLAPPER.get());
         videoButton.setCallbackData("trailer|" + filmName);
         keyboardButtonsRow2.add(videoButton);
 
         InlineKeyboardButton descriptionButton = new InlineKeyboardButton();
-        descriptionButton.setText("Описание фильма "+Emoji.POPCORN.get());
+        descriptionButton.setText("Описание фильма " + Emoji.POPCORN.get());
         descriptionButton.setCallbackData("description|" + filmName);
         keyboardButtonsRow2.add(descriptionButton);
 
