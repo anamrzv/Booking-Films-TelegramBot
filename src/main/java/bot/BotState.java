@@ -7,5 +7,6 @@ public enum BotState {
     SHOW_SESSIONS,
     SHOW_TIME,
     SHOW_DESCRIPTION,
-    SHOW_VIDEO
+    SHOW_VIDEO,
+    GIVE_LINK
 }

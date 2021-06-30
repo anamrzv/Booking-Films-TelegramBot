@@ -18,4 +18,10 @@ public class Session {
         String text = dateAndTime.format(formatter);
         return text;
     }
+
+    public String getTime(){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+        String text = dateAndTime.format(formatter);
+        return text;
+    }
 }
