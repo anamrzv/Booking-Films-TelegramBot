@@ -31,14 +31,23 @@ public class CallBackQueryFacade {
 
         String[] parts = buttonQuery.getData().split("\\|");
         String option = parts[0];
-        String filmName = parts[1];
+        String filmName = null;
+        String day = null;
+        int filmId = Integer.parseInt(parts[1]);
+        for (Film film : films) {
+            if (film.getId() == filmId) {
+                filmName = film.getTitle();
+                break;
+            }
+        }
+        if (option.equals("time")) day = parts[2];
         if (option.equals("sessions")) {
             callBackAnswer = sendAnswerCallbackQuery("Выберите дату сеанса фильма " + filmName + ":\n", buttonQuery);
             callBackAnswer = processSessionsForFilm(callBackAnswer, filmName, films);
             userDataCache.setUsersCurrentBotState(userId, BotState.SHOW_SESSIONS);
         } else if (option.equals("time")) {
-            callBackAnswer = sendAnswerCallbackQuery("Выберите время сеанса фильма " + "\n", buttonQuery);
-            callBackAnswer = processTimesForFilm(callBackAnswer, filmName, films);
+            callBackAnswer = sendAnswerCallbackQuery("Выберите время сеанса фильма " + filmName + "\n", buttonQuery);
+            callBackAnswer = processTimesForFilm(callBackAnswer, day, filmId);
             userDataCache.setUsersCurrentBotState(userId, BotState.SHOW_TIME);
         } else if (option.equals("description")) {
             String description = "";
@@ -65,7 +74,7 @@ public class CallBackQueryFacade {
             callBackAnswer = sendAnswerCallbackQuery("Ссылка на трейлер фильма " + filmName + ":\n" + "https://www.youtube.com/" + trailerURL, buttonQuery);
             userDataCache.setUsersCurrentBotState(userId, BotState.SHOW_VIDEO);
         } else if (option.equals("link")) {
-            String link = "\nhttp://45.84.225.161/film/" + filmName;
+            String link = "http://45.84.225.161/film/" + filmId;
             callBackAnswer = sendAnswerCallbackQuery("Ссылка на бронирование мест: " + link, buttonQuery);
             userDataCache.setUsersCurrentBotState(userId, BotState.GIVE_LINK);
         } else userDataCache.setUsersCurrentBotState(userId, BotState.START_PAGE);
@@ -108,7 +117,7 @@ public class CallBackQueryFacade {
                 List<InlineKeyboardButton> keyboardButtonsRow1 = new ArrayList<>();
                 InlineKeyboardButton Button1 = new InlineKeyboardButton();
                 Button1.setText(listOfSessionsForFilmById.get(i).getDay());
-                Button1.setCallbackData("time|" + listOfSessionsForFilmById.get(i).getDay() + " " + listOfSessionsForFilmById.get(i).getFilmId());
+                Button1.setCallbackData("time|" + filmId + "|" + listOfSessionsForFilmById.get(i).getDateAndTime().toString());
                 keyboardButtonsRow1.add(Button1);
                 rowList.add(keyboardButtonsRow1);
             }
@@ -118,15 +127,12 @@ public class CallBackQueryFacade {
         return callBackAnswer;
     }
 
-    private SendMessage processTimesForFilm(SendMessage callBackAnswer, String dateAndFilm, List<Film> films) {
-        String date = dateAndFilm.substring(0, dateAndFilm.indexOf(" "));
-        int filmID = Integer.parseInt(dateAndFilm.substring(dateAndFilm.indexOf(" ") + 1));
-
+    private SendMessage processTimesForFilm(SendMessage callBackAnswer, String day, int filmID) {
         List<Session> listOfSessions = DataBaseManager.getInstance().getSessionsFromDB();
         List<Session> listOfSessionsForFilmById = new ArrayList<>();
 
         for (int i = 0; i < listOfSessions.size(); i++) {
-            if (date.equals(listOfSessions.get(i).getDay()) && listOfSessions.get(i).getFilmId() == filmID)
+            if (day.equals(listOfSessions.get(i).getDateAndTime().toString()) && listOfSessions.get(i).getFilmId() == filmID)
                 listOfSessionsForFilmById.add(listOfSessions.get(i));
         }
 

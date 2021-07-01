@@ -1,15 +1,11 @@
 package handlers;
 
-import org.telegram.telegrambots.meta.api.objects.InputFile;
 import properties.Film;
 import properties.Session;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.sql.*;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -31,7 +27,7 @@ public class DataBaseManager {
             String DB_DRIVER = "org.postgresql.Driver";
             Class.forName(DB_DRIVER);
             System.out.println("PostgreSQL JDBC Driver успешно поключен");
-            String dir = "c:\\sql\\sql.txt";
+            String dir = "C:/Users/Ana/Programming/info.txt";
             scanner = new Scanner(new FileReader(dir));
         } catch (FileNotFoundException | ClassNotFoundException e) {
             e.printStackTrace();
@@ -131,20 +127,6 @@ public class DataBaseManager {
             return null;
         }
     }
-//todo метод загрузки с БД фоток????
-
-//    public InputFile getPosterFromBD(ResultSet result) {
-//
-//        try {
-//            InputFile poster = ;
-//            String posterName;
-//            posterName = result.getString("poster_name");
-//        } catch (SQLException e) {
-//            System.out.println("Ошибка при чтении фото с базы данных");
-//        }
-//
-//        return poster;
-//    }
 
     public List<Film> getListOfFilms() {
         return listOfFilms;

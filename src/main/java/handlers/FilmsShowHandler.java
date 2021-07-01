@@ -10,6 +10,10 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMa
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import properties.Film;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.net.URL;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
@@ -72,26 +76,43 @@ public class FilmsShowHandler implements InputMessageHandler {
     }
 
     private SendPhoto sendFilmBlocks(String filmName, Message message) {
+        int id = -1;
+        for (Film film : films){
+            if (film.getTitle().equals(filmName)){
+                id = film.getId();
+                break;
+            }
+        }
         SendPhoto filmBlock = new SendPhoto();
         filmBlock.setChatId(message.getChatId().toString());
         filmBlock.setPhoto(new InputFile(getPosterFromBD(filmName)));
         filmBlock.setCaption(filmName);
-        filmBlock.setReplyMarkup(getInlineMessageButtons(filmName));
+        filmBlock.setReplyMarkup(getInlineMessageButtons(id));
         return filmBlock;
     }
 
-    public String getPosterFromBD(String filmName) { //todo добавить загрузку фоток с бд/сервера
-
+    public File getPosterFromBD(String filmName) {
         String poster = null;
         try {
-            poster = "https://image.freepik.com/free-photo/top-view-movie-lettering-on-yellow-background-with-copy-space_23-2148425108.jpg";
+            for (Film film : films){
+                if (film.getTitle().equals(filmName)){
+                    poster = film.getPosterName();
+                    break;
+                }
+            }
+            poster = "http://45.84.225.161/dist/img/"+poster;
+            URL url = new URL(poster);
+            BufferedImage img = ImageIO.read(url);
+            File file = new File("C:/Users/Ana/"+filmName+".jpg");
+            ImageIO.write(img, "jpg", file);
+            return file;
         } catch (Exception e) {
             System.out.println(e);
         }
-        return poster;
+        return null;
     }
 
-    private InlineKeyboardMarkup getInlineMessageButtons(String filmName) {
+    private InlineKeyboardMarkup getInlineMessageButtons(int filmId) {
 
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
         List<InlineKeyboardButton> keyboardButtonsRow1 = new ArrayList<>();
@@ -99,17 +120,17 @@ public class FilmsShowHandler implements InputMessageHandler {
 
         InlineKeyboardButton sessionsButton = new InlineKeyboardButton();
         sessionsButton.setText("Выбрать сеанс " + Emoji.TICKET.get());
-        sessionsButton.setCallbackData("sessions|" + filmName);
+        sessionsButton.setCallbackData("sessions|" + filmId);
         keyboardButtonsRow1.add(sessionsButton);
 
         InlineKeyboardButton videoButton = new InlineKeyboardButton();
         videoButton.setText("Трейлер " + Emoji.CLAPPER.get());
-        videoButton.setCallbackData("trailer|" + filmName);
+        videoButton.setCallbackData("trailer|" + filmId);
         keyboardButtonsRow2.add(videoButton);
 
         InlineKeyboardButton descriptionButton = new InlineKeyboardButton();
         descriptionButton.setText("Описание фильма " + Emoji.POPCORN.get());
-        descriptionButton.setCallbackData("description|" + filmName);
+        descriptionButton.setCallbackData("description|" + filmId);
         keyboardButtonsRow2.add(descriptionButton);
 
         List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
