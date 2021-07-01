@@ -27,7 +27,7 @@ public class DataBaseManager {
             String DB_DRIVER = "org.postgresql.Driver";
             Class.forName(DB_DRIVER);
             System.out.println("PostgreSQL JDBC Driver успешно поключен");
-            String dir = "C:/Users/Ana/Programming/info.txt";
+            String dir = "";
             scanner = new Scanner(new FileReader(dir));
         } catch (FileNotFoundException | ClassNotFoundException e) {
             e.printStackTrace();
