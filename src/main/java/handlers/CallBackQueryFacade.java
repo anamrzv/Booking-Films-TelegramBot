@@ -107,6 +107,7 @@ public class CallBackQueryFacade {
         listOfSessionsForFilmById = listOfSessions.stream()
                 .filter(session -> session.getFilmId() == finalFilmId)
                 .collect(Collectors.toList());
+        System.out.println(listOfSessionsForFilmById);
 
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
@@ -116,8 +117,8 @@ public class CallBackQueryFacade {
             for (int i = 0; i < listOfSessionsForFilmById.size(); i++) {
                 List<InlineKeyboardButton> keyboardButtonsRow1 = new ArrayList<>();
                 InlineKeyboardButton Button1 = new InlineKeyboardButton();
-                Button1.setText(listOfSessionsForFilmById.get(i).getDay());
-                Button1.setCallbackData("time|" + filmId + "|" + listOfSessionsForFilmById.get(i).getDateAndTime().toString());
+                Button1.setText(listOfSessionsForFilmById.get(i).getDay()+" "+listOfSessionsForFilmById.get(i).getTime());
+                Button1.setCallbackData("link|" + filmId);
                 keyboardButtonsRow1.add(Button1);
                 rowList.add(keyboardButtonsRow1);
             }
