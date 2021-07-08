@@ -15,13 +15,11 @@ public class Session {
 
     public String getDay(){
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-        String text = dateAndTime.format(formatter);
-        return text;
+        return dateAndTime.format(formatter);
     }
 
     public String getTime(){
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
-        String text = dateAndTime.format(formatter);
-        return text;
+        return dateAndTime.format(formatter);
     }
 }

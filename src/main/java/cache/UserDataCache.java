@@ -9,7 +9,7 @@ import java.util.Map;
  * Хранит информацию о том, какое состояние бота соответствует каждому пользователю.
  */
 public class UserDataCache implements DataCache {
-    private Map<Integer, BotState> userBotStates = new HashMap<>();
+    private final Map<Integer, BotState> userBotStates = new HashMap<>();
 
     @Override
     public void setUsersCurrentBotState(int userId, BotState botState) {

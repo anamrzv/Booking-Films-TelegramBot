@@ -18,9 +18,9 @@ public class DataBaseManager {
     private Connection connection;
     private Scanner scanner;
     private static DataBaseManager instance;
-    private List<Film> listOfFilms = new LinkedList<>();
-    private List<Session> listOfSessions = new LinkedList<>();
-    private List<Film> filmsNotInRent = new LinkedList<>();
+    private final List<Film> listOfFilms = new LinkedList<>();
+    private final List<Session> listOfSessions = new LinkedList<>();
+    private final List<Film> filmsNotInRent = new LinkedList<>();
 
     private DataBaseManager() {
         try {
@@ -107,7 +107,7 @@ public class DataBaseManager {
             String posterName = result.getString("poster_name");
             String title = result.getString("title");
             String trailer = result.getString("trailer_url");
-            Boolean isInRent = result.getBoolean("in_rent");
+            boolean isInRent = result.getBoolean("in_rent");
             int id = result.getInt("id");
             return new Film(id, title, description, posterName, trailer, isInRent);
         } catch (SQLException e) {

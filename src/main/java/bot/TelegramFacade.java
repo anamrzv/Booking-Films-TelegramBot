@@ -16,14 +16,13 @@ import java.util.List;
 
 
 public class TelegramFacade {
-    private DataCache userDataCache = new UserDataCache();
-    private final List<InputMessageHandler> messageHandlers;
-    private BotStateContext botStateContext;
-    private CallBackQueryFacade callBackQueryFacade = new CallBackQueryFacade(userDataCache);
+    private final DataCache userDataCache = new UserDataCache();
+    private final BotStateContext botStateContext;
+    private final CallBackQueryFacade callBackQueryFacade = new CallBackQueryFacade(userDataCache);
 
 
     public TelegramFacade() {
-        messageHandlers = new LinkedList<>();
+        List<InputMessageHandler> messageHandlers = new LinkedList<>();
         messageHandlers.add(new FilmsShowHandler(userDataCache));
         messageHandlers.add(new StartPageHandler(userDataCache));
         messageHandlers.add(new ShowInfoHandler(userDataCache));

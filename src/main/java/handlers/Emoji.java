@@ -7,7 +7,7 @@ public enum Emoji {
     TICKET(":ticket:"),
     CLAPPER(":clapper:");
 
-    private String value;
+    private final String value;
 
     public String get() {
         return EmojiParser.parseToUnicode(value);

@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class StartPageHandler implements InputMessageHandler{
-    private DataCache userDataCache;
+    private final DataCache userDataCache;
 
     public StartPageHandler(DataCache userDataCache) {
         this.userDataCache = userDataCache;
@@ -44,23 +44,27 @@ public class StartPageHandler implements InputMessageHandler{
     }
 
     private ReplyKeyboardMarkup getReplyKeyboard() {
-            ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
-            replyKeyboardMarkup.setSelective(true);
-            replyKeyboardMarkup.setResizeKeyboard(true);
-            replyKeyboardMarkup.setOneTimeKeyboard(false);
+        return getReplyKeyboardMarkup();
+    }
 
-            List<KeyboardRow> keyboard = new ArrayList<>();
-            KeyboardRow keyboardFirstRow = new KeyboardRow();
-            KeyboardRow keyboardSecondRow = new KeyboardRow();
+    static ReplyKeyboardMarkup getReplyKeyboardMarkup() {
+        ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
+        replyKeyboardMarkup.setSelective(true);
+        replyKeyboardMarkup.setResizeKeyboard(true);
+        replyKeyboardMarkup.setOneTimeKeyboard(false);
 
-            keyboardFirstRow.add(new KeyboardButton("Фильмы"));
-            keyboard.add(keyboardFirstRow);
+        List<KeyboardRow> keyboard = new ArrayList<>();
+        KeyboardRow keyboardFirstRow = new KeyboardRow();
+        KeyboardRow keyboardSecondRow = new KeyboardRow();
 
-            keyboardSecondRow.add(new KeyboardButton("Информация"));
-            keyboard.add(keyboardSecondRow);
+        keyboardFirstRow.add(new KeyboardButton("Фильмы"));
+        keyboard.add(keyboardFirstRow);
 
-            replyKeyboardMarkup.setKeyboard(keyboard);
+        keyboardSecondRow.add(new KeyboardButton("Информация"));
+        keyboard.add(keyboardSecondRow);
 
-            return replyKeyboardMarkup;
+        replyKeyboardMarkup.setKeyboard(keyboard);
+
+        return replyKeyboardMarkup;
     }
 }

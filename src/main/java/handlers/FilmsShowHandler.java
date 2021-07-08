@@ -14,8 +14,6 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.net.URL;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -24,9 +22,8 @@ import java.util.List;
  * Этот класс отвечает за показ списка фильмов.
  */
 public class FilmsShowHandler implements InputMessageHandler {
-    private DataCache userDataCache;
-    private DataBaseManager manager;
-    private List<String> titlesOfFilms = new LinkedList<>();
+    private final DataCache userDataCache;
+    private final List<String> titlesOfFilms = new LinkedList<>();
     private List<Film> films;
     private boolean iterationIsGoingOn;
 
@@ -53,14 +50,14 @@ public class FilmsShowHandler implements InputMessageHandler {
         if (!iterationIsGoingOn) {
             int userId = message.getFrom().getId();
             userDataCache.setUsersCurrentBotState(userId, BotState.SHOW_FILMS);
-            manager = DataBaseManager.getInstance();
+            DataBaseManager manager = DataBaseManager.getInstance();
             films = manager.getListOfFilms();
             for (Film film : films) {
                 titlesOfFilms.add(film.getTitle());
             }
             if (!films.isEmpty()) iterationIsGoingOn = true;
         }
-        if (films.isEmpty() && iterationIsGoingOn == false) {
+        if (films.isEmpty() && !iterationIsGoingOn) {
             SendPhoto answer = new SendPhoto();
             answer.setChatId(message.getChatId().toString());
             answer.setPhoto(new InputFile("https://clck.ru/VooJz"));
